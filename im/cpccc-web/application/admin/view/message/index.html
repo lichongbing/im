@@ -1,0 +1,91 @@
+{include file="public/header"/}
+<script src="/static/h5/js/woker/woker.js"></script>
+<div class="main-body chatlog">
+	<ul id="chat-content">
+
+	</ul>
+</div>
+<script>
+	function listen_message() {
+        var wsAddress = '{$setting.ws_address}';
+        var arr = wsAddress.split(':');
+        var host = arr[1].replace('//', '');
+        var app_key = '{$setting.appkey}';
+
+        var woker = new Woker(app_key, {
+            encrypted: arr[0] == 'wss'
+            , enabledTransports: ['ws','wss']
+            , wsHost: host
+            , wssPort: arr[2]
+            , wsPort: arr[2]
+        });
+
+        // 浏览器监听当前登录者的信息
+        var message_channel = woker.subscribe('cpcccim_all_user_message_8shf72skf');
+        message_channel.on('message', function (item) {
+            var data = {
+                name: item.from_name,
+                avatar: item.from_avatar,
+                content: item.content,
+                from: item.from,
+                sub_type: 'message',
+                timestamp: item.timestamp,
+                to: item.to,
+                to_name: item.to_name,
+                to_avatar: item.to_avatar,
+                type: item.type,
+                mid: item.mid
+            };
+            insert_chatlog(data);
+            scroll_bottom();
+        });
+    }
+
+    var limit = {$limit};
+    $.ajax({
+        url:'/admin/message/chatget',
+        type:'get',
+        data: {limit:limit},
+        success:function(res){
+            $.each(res.data, function (k, item) {
+                insert_chatlog(item);
+            });
+            listen_message();
+            scroll_bottom(true);
+        }
+    });
+
+    function insert_chatlog(data) {
+        if ($('.chatlog ul li').length >= 200) {
+            $('.chatlog ul li:first-child').remove();
+        }
+        $('.chatlog ul').append(chat_decode(data));
+    }
+
+    function scroll_bottom(force) {
+		// 如果滚动条不是拉到最底下则不滚动
+		if (force || $("#chat-content").height() - ($('.chatlog').scrollTop()+$('.chatlog').height()) < 500) {
+			setTimeout(function(){
+				$(".chatlog").scrollTop($("#chat-content").height()+1000);
+			}, 200);
+		}
+    }
+
+</script>
+
+<style>
+	html {
+		font-size: 60px;
+	}
+	.chatlog {
+		padding:.5rem 2rem;
+	}
+	.chatlog ul li.others .gray {
+		opacity: .5;
+	}
+	.chatlog ul li .content .msg {
+		max-width: 10rem;
+	}
+</style>
+
+{include file="public/footer"/}

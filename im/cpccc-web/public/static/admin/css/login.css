@@ -1,0 +1,6 @@
+#login-captcha { position: absolute; right: 1px; top: 1px; height: 36px; cursor: pointer; }
+.layui-input-block{margin-left:0}
+.layui-form {width:20rem;  height: 500px;  margin-left: -10rem;  margin-top: -11rem;}
+h2 {text-align:center}
+h3 {text-align:center;margin-top:20px}
+.main {width: 0;  height: 0;  position: fixed;  left: 50%;  right: 50%;  top: 50%;  bottom: 50%;}

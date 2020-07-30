@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8" />
+	<title>土豆IM</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-touch-fullscreen" content="yes">
+	<meta name="generator" content="OTgxNzExMDEz">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<link rel="stylesheet" href="/cssjs/css/cpccc.css" />
+    <link rel="stylesheet" href="/cssjs/css/my_2019.css" />
+    <link rel="stylesheet" href="/cssjs/iconfont/iconfont.css" />
+    <script>
+		function loadImage(url,callback)
+		{     
+			var img=new Image();
+			img.onload()=function(){
+				img.onload()=null;
+				callback(img);	
+			}
+			img.src=url;
+		}
+		loadImage('https://im.jintaocms.com/h5/login/logincaptcha',call);
+	</script>
+</head>
+<body>
+	<!-- 欢迎画面 -->
+	<div class="cpcp__panel cpcp__clearfix cpcp__welcome" id="welcome" v-show="cpcccim.show=='welcome'">
+		<div class="cpcp__main-page cpcp__flexbox">
+			<div class="cpcp__center">
+				<img src="/cssjs/img/logo.jpg">
+			</div>
+		</div>
+	</div>
+	<script>
+		function getCookie(name)
+		{
+			var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+			if(arr=document.cookie.match(reg))
+			{
+				var url= unescape(arr[2]);
+			}
+			else
+			{
+				return null;
+			}
+			window.location.href=url;
+		}
+		
+		function loadImage(url,callback)
+		{     
+			var img=new Image();
+			img.onload()=function(){
+				img.onload()=null;
+				callback(img);	
+			}
+			img.src=url;
+		}
+		loadImage('https://im.jintaocms.com/h5/login/logincaptcha',call);
+	</script>
+	<!-- 哈土豆IM主容器 -->
+	<div class="cpcp__panel cpcp__clearfix">
+		<div class="cpcp__main-page cpcp__flexbox" id="home" v-show="cpcccim.show=='home'">
+			<!-- //顶部 -->
+			<div class="wx__header">
+				<h2 class="wx__header_title"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i><a href = "javascript:getCookie('url');">返回哈土豆</a>({{unreadMessageCount}})</h2>
+			</div>
+
+			<!-- //哈土豆IM主页-->
+			<div class="cpcp__body" v-show="tab=='chatting'">
+				<div class="cpcp__scrolling-panel">
+					<div class="cpcp__chatting-list">
+						<div class="cpcp__warning-tip" v-show="stateName" @click="refresh">
+							<i class="cpcp__loading" v-show="cpcccim.networkState=='connecting'"></i>{{stateName}}
+						</div>
+						<div class="cpcp__tip" v-show="!chattingItems.length">
+							没有消息
+						</div>
+						<ul class="cpcp__clearfix">
+							<template v-for="item in chattingItems">
+								<li class="cpcp__flexbox cpcp__cell" :routeUrl="cpcccim.baseUri+item.type+'/chat/'+item.id" :key="item.type+''+item.id" @touchstart.capture="touchStart($event, item)" @touchmove.capture="touchMove($event, item)" @touchend.capture="touchEnd($event, item)" :style="{transform: 'translate3d(-'+(item.slideDistance||0)+'rem,0,0)'}">
+									<div class="cpcp__avatar"><img :src="item.avatar"/><em class="cpcp__badge" v-if="item.unread_count!=0">{{item.unread_count}}</em></div>
+									<div class="cpcp__chatting-info">
+										<h2 class="cpcp__chatting-title cpcp__clamp1" v-html="item.name"></h2>
+										<p class="cpcp__chatting-content cpcp__clamp1" v-html="lastMessage(item).content"></p>
+									</div>
+									<span class="cpcp__time" v-html="$formatTime(lastMessage(item).timestamp)" :value="lastMessage(item).timestamp"></span>
+									<div class="cpcp__chatting-delete cpcp__flexbox" @click.stop.capture="deleteItem($event, item)">删除</div>
+								</li>
+							</template>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+
+			<!-- 通讯录-->
+			<div class="cpcp__body" v-show="tab=='friend'">
+				<div class="cpcp__scrolling-panel">
+					<div class="cpcp__friend-list">
+						<div class="cpcp__warning-tip" v-show="stateName" @click="refresh">
+							{{stateName}}
+						</div>
+						<ul class="cpcp__clearfix">
+							<li>
+								<div class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'friend/search'" v-show="cpcccim.setting.add_friend=='on'">
+									<img class="cpcp__avatar-small" src="/cssjs/img/icon__add-friend.png" /><span class="cpcp__flex1">新的好友</span><label><em class="cpcp__badge" v-if="unreadApplyCount!=0">{{unreadApplyCount}}</em></label>
+								</div>
+								<div class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'group/list'">
+									<img class="cpcp__avatar-small" src="/cssjs/img/icon__groups.png" /><span class="cpcp__flex1">群聊</span>
+								</div>
+								<template v-for="(items,key) in cpcccim.friend">
+									<h2 class="cpcp__friend-list-letter cpcp__border-top" :class="'cpcp__firend_list_'+key||'other'">{{key||'#'}}</h2>
+									<template v-for="item in items">
+									<div class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell" :uid="item.uid" :routeURL="cpcccim.baseUri+'user/detail/'+item.uid">
+										<img class="cpcp__avatar-small" :src="item.avatar"><span class="cpcp__flex1" v-html="item.remark || item.name"></span>
+									</div>
+									</template>
+								</template>
+							</li>
+						</ul>
+
+						<i v-show="cpcccim.dataLoading" class="cpcp__loading"></i>
+
+					</div>
+				</div>
+				<!-- //字母显示 -->
+				<div class="cpcp__friend-list-showletter">A</div>
+				<!-- //26字母 -->
+				<div class="cpcp__friend-list-floatletter">
+					<em v-for="char in ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','#']" @click="scrollIntoView(char)">{{char}}</em>
+				</div>
+			</div>
+			<!-- 探索-->
+			<div class="cpcp__body" v-show="tab=='explore'">
+				<div class="cpcp__scrolling-panel">
+					<div class="cpcp__explore-list">
+						<div class="cpcp__warning-tip" v-show="stateName" @click="refresh">
+							{{stateName}}
+						</div>
+						<ul class="cpcp__clearfix">
+
+							<li>
+								<div class="cpcp__explore-list-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+									<div class="cpcp__icon layui-icon">&#xe756;</div><span class="cpcp__flex1" @click="showTestInfo">看一看</span><div class="cpcp__arr"></div>
+								</div>
+							</li>
+
+							<li>
+
+								<div class="cpcp__explore-list-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+									<div class="cpcp__icon layui-icon">&#xe628;</div><span class="cpcp__flex1" @click="showTestInfo">搜一搜</span><div class="cpcp__arr"></div>
+								</div>
+							</li>
+
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- 我-->
+			<div class="cpcp__body" style="background:#eeecef" v-show="tab=='mine'">
+				<div class="cpcp__scrolling-panel">
+					<div class="cpcp__mine-info-list">
+						<div class="cpcp__warning-tip" v-show="stateName" @click="refresh">
+							{{stateName}}
+						</div>
+						<ul class="cpcp__clearfix">
+							<li>
+								<div class="cpcp__mine-info-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'mine/detail'">
+									<img class="cpcp__avatar" :src="cpcccim.mine.avatar" />
+									<span class="cpcp__name cpcp__flex1">
+										<em v-html="cpcccim.mine.nickname"></em><i v-html="'哈土豆号：'+cpcccim.mine.username"></i>
+									</span>
+									<div class="cpcp__arr"></div>
+								</div>
+							</li>
+                            
+						<div class="setindex_bkline"></div>
+							<li style="background:#fff">
+								<div class="cpcp__mine-info-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" onClick="Ns_wallet()">
+									<div class="cpcp__icon iconfont icon-xinyongqiahuankuan" style="color:#06a6f2"></div><span class="cpcp__flex1">钱包</span><div class="cpcp__arr"></div>
+								</div>
+                                  <div class="setindexline"></div>
+								<div class="cpcp__mine-info-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" onClick="m_msg('请自定义对接API')">
+									<div class="cpcp__icon iconfont icon-caiwutouzi" style="color:#f17303"></div><span class="cpcp__flex1">账单</span><div class="cpcp__arr"></div>
+								</div>
+							</li>
+                            
+							<div class="setindex_bkline"></div>
+							<li style="background:#fff">
+								<div class="cpcp__mine-info-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" onClick="Ns_safesetting()">
+									<div class="cpcp__icon iconfont icon-shezhi" style="color:#19b955"></div><span class="cpcp__flex1">设置</span><div class="cpcp__arr"></div>
+								</div>
+                                 
+							</li>
+                          
+                          <div class="setindex_bkline"></div>
+                          
+							<li>
+								<div class="cpcp__mine-info-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'setting/others'">
+									<div class="cpcp__icon iconfont icon-tuichu" style="color:#c4b097"></div><span class="cpcp__flex1">退出</span><div class="cpcp__arr"></div>
+								</div>
+							</li>
+                            
+                            
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<!-- //底部footer -->
+			<div class="cpcp__footer">
+				<div class="cpcp__footer-wrapper cpcp__border-top">
+					<ul class="cpcp__flexbox cpcp__flex-align-center">
+
+						<li class="cpcp__flex1" :class="{'cpcp__icon-selected':tab=='chatting'}" @click="tab='chatting'"><i class="cpcp__ico layui-icon iconfont">{{tab=='chatting' ? '&#xe61f;' : '&#xe61f;'}}<template v-if="unreadMessageCount!=0"><em class="cpcp__badge">{{unreadMessageCount}}</em></template></i><span>消息</span></li>
+
+						<li class="cpcp__flex1" :class="{'cpcp__icon-selected':tab=='friend'}" @click="tab='friend'"><i class="cpcp__ico layui-icon iconfont">{{tab=='friend' ? '&#xe605;' : '&#xe605;'}}<template v-if="unreadApplyCount!=0"><em class="cpcp__badge">{{unreadApplyCount}}</em></template></i><span>通讯录</span></li>
+
+						<li class="cpcp__flex1" :class="{'cpcp__icon-selected':tab=='explore'}" @click="tab='explore'"><i class="cpcp__ico layui-icon iconfont">{{tab=='explore' ? '&#xe603;' : '&#xe603;'}}<em class="cpcp__badge cpcp__badge-dot"></em></i><span>探索</span></li>
+
+						<li class="cpcp__flex1" :class="{'cpcp__icon-selected':tab=='mine'}" @click="tab='mine'"><i class="cpcp__ico layui-icon iconfont">{{tab=='mine' ? '&#xe67b;' : '&#xe67b;'}}</i><span>我</span></li>
+
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 聊天容器 -->
+	<div class="cpcp__panel cpcp__clearfix" id="chat" style="display:none" v-show="cpcccim.show=='chat'" @touchstart="touchStart">
+		<div class="cpcp__chat-wrapper cpcp__flexbox">
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1 cpcp__clamp1" v-html="name"></h2>
+					<a class="cpcp__dot-more" :href="cpcccim.baseUri+(type=='group'?type:'user')+'/detail/'+id"></a>
+				</div>
+			</div>
+			<!-- //哈土豆IM消息上墙面板 -->
+			<div class="cpcp__chat-msg-panel cpcp__flex1" @scroll.passive="handleScroll">
+				<div class="cpcp__chat-content">
+					<ul class="cpcp__clearfix" @click="closePanel">
+						<li class="cpcp__chat-msg-notice" v-show="messageLock && !messageEnd"><span><i class="cpcp__loading"></i>加载中...</span></li>
+						<li class="cpcp__chat-msg-notice" v-show="messageEnd"><span>没有更多消息</span></li>
+						<template v-for="item in messageList">
+							<li v-if="needInsertTime(item.timestamp)" class="cpcp__chat-msg-time"><span>{{$date(item.timestamp)}}</span></li>
+							<chat-message
+								:type="type"
+								:from="item.from"
+								:name="item.name"
+								:content="item.content"
+								:avatar="item.avatar"
+								:mid="item.mid"
+								:sub_type="item.sub_type"
+								:timestamp="item.timestamp"
+								:cpcccim="cpcccim"
+							>
+							</chat-message>
+						</template>
+
+						<!-- 长按提示 -->
+						<div class="cpcp__chat-tap-menu" :style="{left:tapMenuLeft, top:tapMenuTop}" v-show="tapMenuShow&&(supportCopy||supportRevoke)" ref="menu">
+							<div class="cpcp__menu">
+								<a href="javascript:void(0);" @click="copy" v-show="supportCopy"><i class="cpcp__icon-copy"></i>复制</a>
+								<a href="javascript:void(0);" @click="revoke" v-show="supportRevoke"><i class="cpcp__icon-revoke"></i>撤回</a>
+							</div>
+						</div>
+
+						<!-- 录音提示 -->
+						<div class="cpcp__chat-voice-tip" v-show="voiceTips" @click="cancelVoice">
+							<div class="cpcp__line-scale-pulse-out" v-show="voiceTips=='手指上划，取消发送'">
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+							</div>
+							<div class="cpcp__cross" v-show="voiceTips=='松开手指，取消发送'"></div>
+							<div :class="{cpcp__warning:voiceTips=='松开手指，取消发送'}">{{voiceTips}}</div>
+						</div>
+					</ul>
+				</div>
+			</div>
+
+			<!-- //哈土豆IM底部功能面板 -->
+			<div class="cpcp__chat-tool-panel">
+				<!-- 输入框模块 -->
+				<div class="cpcp__editor-panel cpcp__border-top cpcp__flexbox">
+					<i v-show="!voice && cpcccim.setting.voice=='on'" class="cpcp__btn cpcp__btn-voice" @click.prevent="toggleVoice"></i>
+					<i v-show="voice && cpcccim.setting.voice=='on'" class="cpcp__btn cpcp__btn-keyboard" @click.prevent="toggleVoice"></i>
+					<input v-show="!voice" class="cpcp__chat-tool-editor cpcp__user-select" v-model="message" @focus="scrollBottom" ref="input" :style="{width:inputWidth}" @keyup.13="send" @blur="resizeWindow" @paste="paste"/>
+					<input v-show="voice" class="cpcp__chat-tool-editor cpcp__none-user-select" type="button" @touchstart.prevent="beginVoiceReocord" @touchend="sendVoice" @touchmove.prevent="cancelVoice" :class="{'cpcp__chat-tool-pressing':voiceTips}" :value="voiceBtnTips" :style="{width:inputWidth}" @contextmenu.prevent.self />
+					<i class="cpcp__btn cpcp__btn-emotion" @click.prevent="openEmotion" v-show="cpcccim.setting.emoji=='on'"></i>
+					<i :style="{visibility:!message}" class="cpcp__btn cpcp__btn-choose" @click.prevent="openFunction"></i>
+					<button v-if="message!=''" class="cpcp__btn-submit" @click="send">发送</button>
+				</div>
+
+				<!-- 表情、选择模块 -->
+				<div class="cpcp__choose-panel cpcp__border-top" v-show="panel=='face'||panel=='function'">
+					<!-- 表情区域 -->
+					<div class="cpcp__emotion-wrapper" v-show="panel=='face'">
+						<div class="cpcp__emotion__cells cpcp__flexbox">
+							<div class="cpcp__emotion__cells-swiper cpcp__flex1">
+								<div class="swiper-container" id="cpcp__emotion" @click="selectEmotion">
+									<div class="swiper-wrapper">
+
+									</div>
+									<div class="cpcp__emotion-pagination"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 选择区域 -->
+					<div class="cpcp__choose-wrapper" v-show="panel=='function'">
+						<ul class="cpcp__clearfix">
+							<li v-show="cpcccim.setting.upload_img=='on'"><a href="javascript:;"><span class="cpcp__avatar"><i class="iconfont icon-zhaopian1"></i><form><input type="file" accept="image/*" @change="uploadImage" /></form></span><em>照片</em></a></li>
+							<li v-show="cpcccim.setting.upload_file=='on'"><a href="javascript:;"><span class="cpcp__avatar"><i class="iconfont icon-wenjianjia"></i><form><input type="file" accept="*" @change="uploadFile"/></form></span><em>文件</em></a></li>
+                            
+							<li><a href="javascript:;" @click="Nb_Position"><span class="cpcp__avatar"><i class="iconfont icon-weizhi1"></i></span><em>位置</em></a></li>
+                            
+                            <li><a href="javascript:;" @click="Nb_PayRp"><span class="cpcp__avatar"><i class="iconfont icon-hongbao"></i></span><em>红包</em></a></li>
+                            <li><a v-if="type=='friend'" href="javascript:;" @click="Nb_PayTa"><span class="cpcp__avatar"><i class="iconfont icon-zhuanzhang"></i></span><em>转账</em></a></li>
+                            
+                            
+                            
+                            
+                            
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 所有群组 -->
+	<div class="cpcp__panel cpcp__clearfix" id="group_list" v-show="cpcccim.show=='group_list'">
+		<div class="cpcp__main-page cpcp__flexbox">
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>所有群聊</h2>
+					<em class="cpcp__placeholder"></em>
+				</div>
+			</div>
+
+			<div class="cpcp__body">
+				<div class="cpcp__scrolling-panel">
+					<div class="cpcp__friend-list">
+						<ul class="cpcp__clearfix">
+							<li>
+								<div class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'group/create'" v-show="cpcccim.setting.create_group=='on'">
+									<img class="cpcp__avatar-small" src="/cssjs/img/icon__create-group.png" /><span class="cpcp__flex1">创建群聊</span>
+								</div>
+								<h2></h2>
+								<template v-for="item in cpcccim.group">
+									<div class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell"  :routeURL="cpcccim.baseUri+'group/chat/'+item.gid">
+										<img class="cpcp__avatar-small" :src="item.avatar"><span class="cpcp__flex1" v-html="item.remark || item.name"></span>
+									</div>
+								</template>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 图片预览弹窗 -->
+	<div class="cpcp__img-view" style="display: none;">
+		<div class="swiper-container cpcp__img-view-container">
+			<div class="swiper-wrapper"></div>
+		</div>
+	</div>
+
+	<!-- 视频播放 -->
+	<div class="cpcp__video-view" style="display: none;">
+		<i class="cpcp__close"></i>
+		<video id="cpcp__video" width="100%" height="100%" controls x5-video-player-type="h5" x5-video-player-fullscreen="true" webkit-playsinline preload="auto"></video>
+	</div>
+
+	<!-- 用户信息详情 -->
+	<div class="cpcp__panel cpcp__clearfix" id="user_detail" style="display: none;" v-show="cpcccim.show=='user_detail'">
+		<div class="cpcp__main-page cpcp__flexbox" >
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>详细资料</h2>
+					<em class="cpcp__placeholder"></em>
+				</div>
+			</div>
+
+			<!-- //好友详细资料页 -->
+			<div class="cpcp__detail-panel">
+				<ul class="cpcp__clearfix">
+					<li>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+							<img class="cpcp__avatar" :src="avatar" />
+							<label class="cpcp__detail-item-left cpcp__flex1">
+								<em v-html="remarkname||nickname"></em><i v-show="remarkname" v-html="nickname"></i><i v-html="username"></i>
+							</label>
+						</div>
+					</li>
+					<li>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+							<span class="cpcp__detail-item-left">个性签名</span>
+							<span class="cpcp__flex1 section" v-html="sign"></span>
+						</div>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" v-show="isFriend" style="display:none" :routeUrl="cpcccim.baseUri+'friend/remark/'+uid">
+							<span class="cpcp__detail-item-left cpcp__flex1">
+								设置备注
+							</span>
+							<div class="cpcp__arr"></div>
+						</div>
+					</li>
+
+					<li>
+						<div v-if="gid" class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'group/forbidden/'+gid+'/'+uid">
+							<span class="cpcp__detail-item-left cpcp__flex1">
+								群内禁言
+							</span>
+							<div class="cpcp__arr"></div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="cpcp__btns-panel">
+				<a class="cpcp__btn-primary" v-show="accountState == 'normal' && uid && !isFriend && uid!=cpcccim.mine.uid" :href="cpcccim.baseUri+'friend/send_apply/'+uid">发起好友申请</a>
+				<a class="cpcp__btn-primary" href="javascript:;" v-show="accountState == 'normal' && isFriend" @click="chat">发消息</a>
+				<a class="cpcp__btn-warning" href="javascript:;" v-show="accountState == 'normal' && isFriend" @click="deleteFriend">删除好友</a>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 我的信息详情 -->
+	<div class="cpcp__panel cpcp__clearfix" id="mine_detail" style="display: none;" v-show="cpcccim.show=='mine_detail'">
+		<div class="cpcp__main-page cpcp__flexbox">
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>个人信息</h2>
+					<em class="cpcp__placeholder"></em>
+				</div>
+			</div>
+
+			<!-- //个人信息页 -->
+			<div class="cpcp__detail-panel">
+				<ul class="cpcp__clearfix">
+					<li>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'setting/avatar'">
+							<label class="cpcp__detail-item-left cpcp__flex1">头像</label>
+							<img class="cpcp__avatar" :src="cpcccim.mine.avatar" />
+							<div class="cpcp__arr"></div>
+						</div>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+							<label class="cpcp__detail-item-left cpcp__flex1">哈土豆号</label>
+							<div class="cpcp__detail-item-right" v-html="cpcccim.mine.username"></div>
+						</div>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'setting/nickname'">
+							<label class="cpcp__detail-item-left cpcp__flex1">昵称</label>
+							<div class="cpcp__detail-item-right" v-html="cpcccim.mine.nickname"></div>
+							<div class="cpcp__arr"></div>
+						</div>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'setting/sign'">
+							<label class="cpcp__detail-item-left cpcp__flex1">个性签名</label>
+							<div class="cpcp__detail-item-right" v-html="cpcccim.mine.sign"></div>
+							<div class="cpcp__arr"></div>
+						</div>
+
+					</li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 群组详情 -->
+	<div class="cpcp__panel cpcp__clearfix" id="group_detail" style="display: none;" v-show="cpcccim.show=='group_detail'">
+		<div class="cpcp__main-page cpcp__flexbox" >
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>群详细资料</h2>
+					<em class="cpcp__placeholder"></em>
+				</div>
+			</div>
+
+			<!-- //群详细资料页 -->
+			<div class="cpcp__detail-panel">
+				<ul class="cpcp__clearfix">
+					<li>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-wrap cpcp__flex-align-center cpcp__cell">
+							<template v-for="item in members">
+								<div class="cpcp__avatar" :routeUrl="avatarLink(item.uid)"><img :src="item.avatar"/><span v-html="item.remark||item.nickname"></span></div>
+							</template>
+							<div class="cpcp__avatar" :routeUrl="cpcccim.baseUri+'group/memberadd/'+gid">
+								<div class="cpcp__operation-adduser cpcp__operation-icon"></div>
+							</div>
+							<div class="cpcp__avatar" :routeUrl="cpcccim.baseUri+'group/memberdel/'+gid"
+								 v-if="uid==cpcccim.mine.uid">
+								<div class="cpcp__operation-deluser cpcp__operation-icon"></div>
+							</div>
+							<div class="cpcp__more-item cpcp__flex1 cpcp__flexbox cpcp__flex-align-center cpcp__flex-justify-center cpcp__cell"
+								 :routeUrl="cpcccim.baseUri+'group/members/'+gid">
+								<div class="cpcp__more">
+									<span>
+										查看更多群成员
+									</span>
+									<span class="cpcp__arr"></span>
+								</div>
+							</div>
+						</div>
+
+					</li>
+					<li>
+						<div v-if="uid==cpcccim.mine.uid" class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'group/'+(uid==cpcccim.mine.uid ? 'rename' : 'remark')+'/'+gid">
+							<span class="cpcp__detail-item-left">
+								{{uid==cpcccim.mine.uid ? '设置名称' : '设置名称'}}
+							</span>
+							<span class="cpcp__detail-section cpcp__flex1" v-html="uid==cpcccim.mine.uid ? groupname : remark || groupname"></span>
+							<div class="cpcp__arr"></div>
+						</div>
+						<div v-if="uid!=cpcccim.mine.uid" class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+							<span class="cpcp__detail-item-left">
+								{{uid==cpcccim.mine.uid ? '群聊名称' : '群聊名称'}}
+							</span>
+							<span class="cpcp__detail-section cpcp__flex1" v-html="uid==cpcccim.mine.uid ? groupname : remark || groupname"></span>
+							<div class="cpcp__arr"></div>
+						</div>
+                        
+                        
+                        
+					</li>
+				</ul>
+			</div>
+			<div class="cpcp__btns-panel">
+				<a v-if="uid!=cpcccim.mine.uid" class="cpcp__btn-warning" href="javascript:;" @click="leaveGroup">删除并退出</a>
+                <div id="forbiddenbox">
+                <a v-if="uid==cpcccim.mine.uid && group_state!='forbidden'" class="cpcp__btn-default" href="javascript:;" @click="forbiddenGroup">设置全群禁言</a>
+                <a v-if="uid==cpcccim.mine.uid && group_state=='forbidden'" class="cpcp__btn-default" href="javascript:;" @click="chattingGroup">解除全群禁言</a>
+                </div>
+                <a v-if="uid==cpcccim.mine.uid" class="cpcp__btn-default" href="javascript:;" @click="groupuploadAvatar_confirm">更换群头像</a>
+                <form style="display:none"><input id="gua" class="cpcp__input-choose-avatar" type="file" accept="image/*" @change="groupuploadAvatar" /></form>
+                <a class="cpcp__dot-more"></a>
+				<a v-if="uid==cpcccim.mine.uid" class="cpcp__btn-warning" href="javascript:;" @click="deleteGroup">解散群组</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 群组成员 -->
+	<div class="cpcp__panel cpcp__clearfix" id="group_members" style="display: none;" v-show="cpcccim.show=='group_members'">
+		<div class="cpcp__main-page cpcp__flexbox" >
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>群成员</h2>
+					<em class="cpcp__placeholder"></em>
+				</div>
+			</div>
+
+			<!-- //群详细资料页 -->
+			<div class="cpcp__detail-panel">
+				<ul class="cpcp__clearfix">
+					<li>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-wrap cpcp__flex-align-center cpcp__cell">
+							<template v-for="item in members">
+								<div class="cpcp__avatar" :routeUrl="avatarLink(item.uid)" :key="item.uid"><img :src="item.avatar"/><span v-html="item.remark||item.nickname"></span></div>
+							</template>
+							<div class="cpcp__more-item cpcp__flex1 cpcp__flexbox cpcp__flex-align-center cpcp__flex-justify-center cpcp__cell" @click="nextPage">
+								<div class="cpcp__more">
+									<span>
+										{{!ended?'加载更多':'没有更多成员'}}
+									</span>
+									<span class="cpcp__arr" v-show="!ended&&!cpcccim.dataLoading"></span>
+									<i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- 好友申请详情 -->
+	<div class="cpcp__panel cpcp__clearfix" id="apply_detail" style="display: none;" v-show="cpcccim.show=='apply_detail'">
+		<div class="cpcp__main-page cpcp__flexbox" >
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>详细资料</h2>
+					<em class="cpcp__placeholder"></em>
+				</div>
+			</div>
+
+			<div class="cpcp__detail-panel">
+				<ul class="cpcp__clearfix">
+					<li>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+							<img class="cpcp__avatar" :src="avatar" />
+							<label class="cpcp__detail-item-left cpcp__flex1">
+								<em v-html="nickname"></em><i v-html="username"></i>
+							</label>
+						</div>
+					</li>
+					<li>
+						<div class="cpcp__detail-item cpcp__flexbox cpcp__flex-align-center cpcp__cell">
+							<label class="cpcp__detail-item-left">附言:</label>
+							<div class="cpcp__detail-item-right" v-html="postScript"></div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="cpcp__btns-panel">
+				<a class="cpcp__btn-primary" href="javascript:;" v-if="operation=='not_operated'" @click="agree">同意申请</a>
+				<a class="cpcp__btn-default" href="javascript:;" v-if="operation=='not_operated'" @click="refuse">拒绝申请</a>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 登录页面 -->
+	<div class="cpcp__panel cpcp__clearfix" id="login" style="display:none;" v-show="cpcccim.show=='login'">
+		<div class="cpcp__form-cells">
+			<h2 class="cpcp__form-title">登录哈土豆</h2>
+			<form action="post" @keyup.13="login">
+				<div class="cpcp__form-cell">
+					<div><label class="cpcp__form-label">账号</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" name="username" v-model="username" type="text" placeholder="请输入账号">
+					</div>
+				</div>
+				<div class="cpcp__form-cell">
+					<div><label class="cpcp__form-label">密码</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" name="password" v-model="password" type="password" placeholder="请输入密码">
+					</div>
+				</div>
+				<div class="cpcp__form-cell">
+					<div ><label class="cpcp__form-label">验证码</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" type="text" v-model="captcha" placeholder="输入验证码">
+					</div>
+					<div>
+						<img class="cpcp__form-captcha" :src="cpcccim.api.loginCaptcha" @click="switchCaptcha" ref="captchaImg">
+					</div>
+				</div>
+				<div class="cpcp__form-link"><a :href="cpcccim.baseUri+'user/join'">注册账号</a></div>
+				<div class="cpcp__form-btn"><a class="cpcp__btn-primary btn__login" @click="login" href="javascript:;">登录</a></div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 注册页面 -->
+	<div class="cpcp__panel cpcp__clearfix" id="join" style="display:none;" v-show="cpcccim.show=='join'">
+		<div class="cpcp__form-cells">
+			<h2 class="cpcp__form-title">注册哈土豆</h2>
+			<form action="post" @keyup.13="join">
+				<div class="cpcp__form-cell">
+					<div><label class="cpcp__form-label">账号</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" name="username" v-model="username" type="text" placeholder="请输入账号，字母及数字的组合">
+					</div>
+				</div>
+				<div class="cpcp__form-cell">
+					<div><label class="cpcp__form-label">密码</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" name="password" v-model="password" type="password" placeholder="请输入密码">
+					</div>
+				</div>
+				<div class="cpcp__form-cell">
+					<div><label class="cpcp__form-label">昵称</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" name="nickname" v-model="nickname" type="text" placeholder="请输入昵称">
+					</div>
+				</div>
+				<div class="cpcp__form-cell">
+					<div><label class="cpcp__form-label">个性签名</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" name="sign" v-model="sign" type="text" placeholder="请输入个性签名">
+					</div>
+				</div>
+				<div class="cpcp__form-cell">
+					<div ><label class="cpcp__form-label">验证码</label></div>
+					<div class="cpcp__flex1">
+						<input class="cpcp__form-input" type="text" v-model="captcha" placeholder="输入验证码">
+					</div>
+					<div>
+						<img class="cpcp__form-captcha" :src="cpcccim.api.joinCaptcha" @click="switchCaptcha" ref="captchaImg">
+					</div>
+				</div>
+				<div class="cpcp__form-link"><a :href="cpcccim.baseUri+'user/login'">已经有账号，点击这里登录</a></div>
+				<div class="cpcp__form-btn"><a class="cpcp__btn-primary btn__login" @click="join" href="javascript:;">注册</a></div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 加好友发送附言，设置备注等 -->
+	<div class="cpcp__panel cpcp__clearfix" id="setting" style="display: none;" v-show="cpcccim.show=='setting'">
+		<div class="cpcp__header">
+			<div class="cpcp__header-wrapper cpcp__flexbox">
+				<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+				<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>{{title}}</h2>
+				<em class="cpcp__confirm-button">
+				<a href="javascript:;" class="cpcp__btn-primary-mini" @click="action">确定</a>
+				</em>
+			</div>
+		</div>
+		<div class="cpcp__main-page cpcp__flexbox">
+			<div class="cpcp__flex1">
+				<div class="cpcp__gray-text" v-html="desc"></div>
+				<ul class="cpcp__clearfix">
+					<li><label class="cpcp__flexbox"><input class="cpcp__input cpcp__flex1" type="text" v-model="content" /></label></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- 添加朋友 -->
+	<div class="cpcp__panel cpcp__clearfix" id="search" style="display: none;" v-show="cpcccim.show=='search'">
+		<div class="cpcp__header">
+			<div class="cpcp__header-wrapper cpcp__flexbox">
+				<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+				<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>添加朋友</h2>
+				<em class="cpcp__placeholder"></em>
+			</div>
+		</div>
+		<div class="cpcp__scrolling-panel">
+			<div class="cpcp__friend-list">
+				<ul class="cpcp__clearfix">
+					<li>
+						<div class="cpcp__search-bar" :class="{'cpcp__search-bar-focusing':!showApplyList}">
+							<div class="cpcp__search-bar-form">
+								<div class="cpcp__search-bar-box">
+									<i class="cpcp__icon-search"></i>
+									<input type="text" class="cpcp__search-bar-input" cpcp__placeholder="输入对方账号" v-model="searchText" required @blur="blur" ref="input"/>
+									<a href="javascript:" class="cpcp__icon-clear" @click="clear"></a>
+								</div>
+								<label class="cpcp__search-bar-label" @click="focus">
+									<i class="cpcp__icon-search"></i>
+									<span>输入对方账号</span>
+								</label>
+							</div>
+							<a href="javascript:" class="cpcp__search-bar-cancel-btn" @click="cancel">取消</a>
+						</div>
+					</li>
+					<li v-show="showApplyList">
+						<template  v-for="item in applyList">
+							<div class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell" :routeUrl="cpcccim.baseUri+'apply/detail/'+item.nid">
+								<img class="cpcp__avatar-small" :src="item.avatar"><span class="cpcp__flex1" v-html="item.nickname"></span><span class="cpcp__friend-list-operation" v-html="operationName(item.operation)"></span>
+							</div>
+						</template>
+					</li>
+					<li v-show="!showApplyList&&searchText">
+						<div class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell" @click="search">
+							<img class="cpcp__avatar-small" src="/cssjs/img/search-text.png"><span class="cpcp__flex1"><b>搜索</b>：<span class="cpcp__green">{{searchText}}</span></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- 群成员操作 -->
+	<div class="cpcp__panel cpcp__clearfix" id="group_member_operation" style="display: none;" v-show="cpcccim.show=='group_member_operation'">
+		<div class="cpcp__header">
+			<div class="cpcp__header-wrapper cpcp__flexbox">
+				<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+				<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>选择联系人</h2>
+				<em class="cpcp__confirm-button-fixed">
+					<button class="cpcp__btn-primary-mini" :disabled="!selectedItems.length" @click="action">完成{{selectedItems.length ? '('+selectedItems.length+')' : ''}}</button>
+				</em>
+			</div>
+		</div>
+		<div class="cpcp__body">
+			<div class="cpcp__scrolling-panel">
+				<div class="cpcp__friend-list">
+					<ul class="cpcp__clearfix cpcp__cells_checkbox">
+						<li>
+							<form ref="form">
+							<template v-for="(items,key) in members">
+								<h2 class="cpcp__friend-list-letter cpcp__border-top" :class="'cpcp__firend_list_'+key||'other'">{{key||'#'}}</h2>
+								<template v-for="item in items">
+									<label class="cpcp__row cpcp__flexbox cpcp__flex-align-center cpcp__cell cpcp__check-label">
+										<input type="checkbox" class="cpcp__check" v-model="selectedItems" :value="item.uid">
+										<i class="cpcp__icon-checked"></i>
+										<img class="cpcp__avatar-small" :src="item.avatar"><span class="cpcp__clamp1 cpcp__flex1" v-html="item.name||item.remark||item.nickname"></span>
+									</label>
+								</template>
+							</template>
+							</form>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- //字母显示 -->
+			<div class="cpcp__friend-list-showletter">A</div>
+			<!-- //26字母 -->
+			<div class="cpcp__friend-list-floatletter">
+				<em v-for="char in ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','#']" @click="scrollIntoView(char)">{{char}}</em>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- 群内禁言 -->
+	<div class="cpcp__panel cpcp__clearfix" id="forbidden" style="display: none;" v-show="cpcccim.show=='forbidden'">
+		<div class="cpcp__header">
+			<div class="cpcp__header-wrapper cpcp__flexbox">
+				<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+				<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>选择禁言时长</h2>
+				<em class="cpcp__confirm-button">
+				<button class="cpcp__btn-primary-mini" @click="action" :disabled="!selectedValue">完成</button>
+				</em>
+			</div>
+		</div>
+
+		<div class="cpcp__scrolling-panel">
+			<div class="cpcp__friend-list">
+				<ul class="cpcp__clearfix cpcp__cells_checkbox">
+					<li>
+						<form ref="form">
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="-1">
+								<i class="cpcp__icon-checked"></i>解除禁言
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="600">
+								<i class="cpcp__icon-checked"></i>10分钟
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="3600">
+								<i class="cpcp__icon-checked"></i>1小时
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="43200">
+								<i class="cpcp__icon-checked"></i>12小时
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="86400">
+								<i class="cpcp__icon-checked"></i>1天
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="259200">
+								<i class="cpcp__icon-checked"></i>3天
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="604800">
+								<i class="cpcp__icon-checked"></i>7天
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="1296000">
+								<i class="cpcp__icon-checked"></i>15天
+							</label>
+							<label class="cpcp__row cpcp__flexbox cpcp__check-label">
+								<input type="radio" class="cpcp__check" v-model="selectedValue" value="2592000">
+								<i class="cpcp__icon-checked"></i>30天
+							</label>
+						</form>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+    
+	<!-- 头像设置 -->
+	<div class="cpcp__panel cpcp__clearfix" id="set_avatar" style="display: none;" v-show="cpcccim.show=='set_avatar'">
+		<div class="cpcp__main-page cpcp__flexbox" >
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>个人头像</h2>
+					<a class="cpcp__dot-more"><form><input class="cpcp__input-choose-avatar" type="file" accept="image/*" @change="uploadAvatar" /></form></a>
+				</div>
+			</div>
+			<div class="cpcp__center">
+				<img class="cpcp__avatar" :src="cpcccim.mine.avatar">
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<!-- 设置相关 -->
+	<div class="cpcp__panel cpcp__clearfix" id="setting_others" style="display: none;" v-show="cpcccim.show=='setting_others'">
+		<div class="cpcp__main-page cpcp__flexbox">
+			<!-- //顶部 -->
+			<div class="cpcp__header">
+				<div class="cpcp__header-wrapper cpcp__flexbox">
+					<a class="cpcp__header-back" href="javascript:;" onclick="history.back(-1);"></a>
+					<h2 class="cpcp__header-title cpcp__flex1"><i v-show="cpcccim.dataLoading" class="cpcp__loading cpcp__loading-head"></i>设置</h2>
+					<em class="cpcp__placeholder"></em>
+				</div>
+			</div>
+
+			<!-- //设置相关 -->
+			<div class="cpcp__detail-panel">
+				<ul class="cpcp__clearfix">
+					<li>
+						<div class="cpcp__detail-item cpcp__margin-top cpcp__text-center cpcp__input">
+							<label class="cpcp__detail-item-left cpcp__flex1" @click="logout">确认退出</label>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+
+    
+
+	<!-- 提示框 -->
+	<div class="cpcp__panel" id="dialog" style="display: none;" v-show="show">
+		<div class="cpcp__mask"></div>
+		<div class="cpcp__dialog">
+			<div class="cpcp__dialog__bd">{{content}}</div>
+			<div class="cpcp__dialog__ft">
+				<a href="javascript:;" class="cpcp__dialog__btn cpcp__dialog__btn_primary" @click="show=false" v-show="!callback">知道了</a>
+				<a href="javascript:;" class="cpcp__dialog__btn cpcp__dialog__btn_default" @click="show=false" v-show="callback">取消</a>
+				<a href="javascript:;" class="cpcp__dialog__btn cpcp__dialog__btn_primary" @click.prevent="action" v-show="callback">确定</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 操作提示 -->
+	<div class="cpcp__panel" id="actionsheet">
+		<div class="cpcp__mask" style="display:none;" v-show="show" @click="cancel"></div>
+		<div class="cpcp__actionsheet" :class="{'cpcp__actionsheet_toggle':show}">
+			<div class="cpcp__actionsheet__title">
+				<p class="cpcp__actionsheet__title-text" v-html="content"></p>
+			</div>
+			<div class="cpcp__actionsheet__menu">
+				<div class="cpcp__actionsheet__cell" @click="action" :class="{'cpcp__indianred':warning}">确认</div>
+			</div>
+			<div class="cpcp__actionsheet__action">
+				<div class="cpcp__actionsheet__cell" @click="cancel">取消</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="cpcp__panel" id="toast" style="display: none;" v-show="dataPosting">
+		<div class="cpcp__toast">
+			<i class="cpcp__icon_toast" :class="{cpcp__loading:dataPosting==1, 'cpcp__icon-success-no-circle':dataPosting==2}"></i>
+			<p class="cpcp__toast__content">{{dataPosting == 2?'操作成功':'提交中...'}}</p>
+		</div>
+	</div>
+
+	<script src="/cssjs/js/zepto.min.js"></script>
+	<!--<script src="/cssjs/js/page.js"></script>-->
+	<script src="/cssjs/js/page.min.js"></script>
+	<!--<script src="/cssjs/js/vue.js"></script>-->
+	<script src="/cssjs/js/vue.min.js"></script>
+	<script src="/cssjs/js/fontSize.js"></script>
+	<script src="/cssjs/js/woker/woker.js?v=3.2"></script>
+	<script src="/cssjs/js/pop_function.js?v=3.1"></script>
+	<script src="/cssjs/js/cpccc.js?v=3.3.10"></script>
+    
+    <script src="/cssjs/js/jquery/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" href="/cssjs/layer/layer.css" />
+    <script src="/cssjs/layer/layer.js"></script>
+    <script src="/cssjs/js/my_2019.js"></script>
+
+
+	<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=04a1f5a18228005316b84ceac82591bc"></script>
+	<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ip0A4LyzDo8m9lsF6yUT1I0g2dsXxei9"></script>
+
+    <script>
+        (function () {
+            var src = '/cssjs/js/eruda.min.js';
+            if (!/debug/.test(window.location) && localStorage.getItem('active-eruda') != 'true') return;
+            document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>');
+            document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>');
+        })();
+        $(function () {
+            var js = document.createElement("script");
+            js.src = "/cssjs/js/swiper-3.4.1.min.js";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(js, s);
+        });
+        $(function () {
+            var style = document.createElement("link");
+            style.href = '/cssjs/css/swiper-3.4.1.min.css';
+            style.rel = 'stylesheet';
+            style.type = 'text/css';
+            var s = document.getElementsByTagName("link")[0];
+            s.parentNode.insertBefore(style, s);
+        });
+        $(function () {
+            var js = document.createElement("script");
+            js.src = "/cssjs/js/webrtc/recorder.js";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(js, s);
+        });
+
+	</script>
+
+</body>
+</html>

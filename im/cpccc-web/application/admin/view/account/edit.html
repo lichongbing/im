@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <title>哈土豆IM管理后台-账户编辑</title>
+    <link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+    <script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+    <script src="/static/admin/libs/layui/layui.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/user.css">
+</head>
+
+<body>
+<div class="edit">
+    <form class="layui-form" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">原始密码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="old_password" required placeholder="原始密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="password" required placeholder="新密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="edit">立即提交</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+
+        layui.use('form', function(){
+            var form = layui.form;
+            //监听提交
+            form.on('submit(edit)', function(data){
+                $.ajax({
+                    url:'/admin/account/edit',
+                    type:'post',
+                    data: data.field,
+                    success:function(res){
+                        if (res.code == 0) {
+                            layui.layer.msg('修改成功');
+                            setTimeout(function () {
+                                parent.location = '/admin/login/logout';
+                            }, 2000);
+                        } else {
+                            layui.layer.msg(res.msg);
+                        }
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</div>
+
+</body>
+</html>
+
+

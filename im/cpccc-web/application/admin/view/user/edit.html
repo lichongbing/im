@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+	<title>哈土豆IM管理后台-消息日志</title>
+	<link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+	<script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+	<script src="/static/admin/libs/layui/layui.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/main.css">
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/user.css">
+</head>
+
+<body>
+<div class="edit">
+	<form class="layui-form" action="">
+		<input type="hidden" name="uid" lay-verify="required"  value="{$user_info['uid']}">
+		<input type="hidden" name="avatar" value="{$user_info['avatar']}">
+		<div class="layui-form-item">
+			<label class="layui-form-label">头像</label>
+			<div class="layui-input-block">
+				<img src="{$user_info['avatar']}" class="avatar"/>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">账号</label>
+			<div class="layui-input-block">
+				<input type="text" name="username" required  lay-verify="required" placeholder="输入账号" autocomplete="off" class="layui-input" value="{$user_info['username']}" disabled>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">昵称</label>
+			<div class="layui-input-block">
+				<input type="text" name="nickname" required  lay-verify="required" placeholder="输入昵称" autocomplete="off" class="layui-input" value="{$user_info['nickname']}">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">密码</label>
+			<div class="layui-input-inline">
+				<input type="text" name="password" required placeholder="不改密码请留空" autocomplete="off" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">不改密码请留空</div>
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">个性签名</label>
+			<div class="layui-input-block">
+				<textarea name="sign" placeholder="个性签名" class="layui-textarea">{$user_info['sign']}</textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="edit">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+
+	<script>
+
+        layui.use('form', function(){
+            var form = layui.form;
+            //监听提交
+            form.on('submit(edit)', function(data){
+                $.ajax({
+                    url:'/admin/user/update',
+                    type:'post',
+                    data: data.field,
+                    success:function(res){
+                        if (res.code == 0) {
+                            layui.layer.msg('修改成功');
+                            setTimeout(function () {
+                                parent.location.reload();
+                            }, 2000);
+                        } else {
+                            layui.layer.msg(res.msg);
+                        }
+                    }
+                });
+                return false;
+            });
+        });
+
+        layui.use(['upload', 'layer'], function(){
+            var upload = layui.upload;
+
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '.avatar' //绑定元素
+                ,url: '/admin/user/avatar' //上传接口
+				,data: {uid:{$user_info['uid']}}
+                ,done: function(res){
+                    if (res.code == 0) {
+                        $('input[name="avatar"]').val(res.data.src);
+                        $('.avatar').attr('src', res.data.src);
+                    } else {
+                        layui.layer.msg(res.msg);
+					}
+                }
+                ,error: function(){
+                    layui.layer.msg('上传失败');
+                }
+            });
+        });
+	</script>
+</div>
+
+</body>
+</html>
+
+

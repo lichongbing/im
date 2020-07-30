@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+	<title>哈土豆IM安装向导</title>
+	<link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+	<script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+	<script src="/static/admin/libs/layui/layui.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/install.css">
+</head>
+<body>
+<div class="install-body complete">
+	<h2 class="form-item">恭喜，哈土豆IM安装完毕</h2>
+	<h5 class="form-item">重新安装，请删除/config/database.php</h5>
+	{$del_install_file ? '<h5 class="form-item">建议删除安装文件 application/admin/controller/Install.php</h5>' : ''}
+	<a class="layui-btn form-item" href="/im/h5/">进入主页</a> <a class="layui-btn form-item" href="/admin/login/index">进入管理后台</a>
+</div>
+</body>
+</html>

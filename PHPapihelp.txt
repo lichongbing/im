@@ -1,0 +1,104 @@
+
+
+=======================整合api===================================
+
+1：url模式访问即可换起聊天功能【已可生成二维码】php用phpqrcode生成连接
+
+
+
+u：发起人会员用户ID【唯一值】
+n：发起人用户手机
+a：发起人自己头像
+s：发起人自己的地址
+
+tu：对方的ID【被聊天对象】【唯一值】
+tn：对方的名字【被聊天对象】
+ta：对方的头像【被聊天对象】
+ts：地址比如重庆【被聊天对象】
+
+url：回调url，返回对接的网站【被聊天对象】
+
+
+demo：https://im.baidu.com/uis.php?u=30986&n=17194348115&a=&s=&tu=30851&tn=陈禹同&ta=https://wyinchengcastingidu.com/data/upload/user/20191014/make15761705383.JPG&ts=重庆市&url=https://baidu.com/wap/resume.html
+
+
+=======================整合余额红包===================================
+您网站会员ID跟IM会员ID一致
+
+1：IM数据库跟网站数据库安装一个数据库下面
+2：您的网站修改余额时候修改IM下面相同ID的余额
+3：您IM网站修改余额的时候修改下您网站的会员ID的余额
+
+
+=======================整合Baocms的API下面是会员跟商家对话===================================
+html文件：themes\default\wap\shop\detail.html
+
+<php>
+
+$u= M('users')->where(array('user_id'=>$MEMBER['user_id']))->find();
+$to= M('users')->where(array('user_id'=>$detail['user_id']))->find();
+$furl = $CONFIG['site']['host']."/wap/shop/detail/shop_id/".$detail['shop_id'];
+
+$url = "https://im.niukea.com/uis.php?u=".$u['user_id']."&n=".$u['nickname']."&a=".config_weixin_img($u['face'])."&s=&tu=".$to['user_id']."&tn=".$to['nickname']."&ta=".config_weixin_img($to['face'])."&ts=重庆市&url=".$furl;
+
+$false = 0;
+if($MEMBER['user_id'] == $detail['user_id'] || empty($MEMBER['user_id']) || empty($detail['user_id'])){
+	$false = 0;
+}else{
+	$false = 1;
+}
+
+</php>
+
+
+<if condition="$false"> 
+    <div class="blank-10 bg"></div>
+    <div class="container2" style="margin:10px;">
+        <div class="form-button"><a href="<{$url}>" class="button button-block button-big bg-dot text-center" type="submit">联系商家客服</a></div>
+    </div>
+</if>  
+=========================================================================================================================
+
+
+
+=======================整合jintaocms的tp5===================================
+php文件：application/wap/controller/shop.php
+
+//整合IM开始加方法detail里面
+
+
+		$config = Setting::config();
+		$imhost = $config['site']['imhost'];
+		
+		$u= Db::name('users')->where(array('user_id'=>$this->uid))->find();
+		$to= Db::name('users')->where(array('user_id'=>$detail['user_id']))->find();
+		
+		$furl = $config['site']['host']."/wap/shop/detail/shop_id/".$detail['shop_id'];
+		$url = $imhost."/uis.php?u=".$u['user_id']."&n=".$u['nickname']."&a=".config_weixin_img($u['face'])."&s=&tu=".$to['user_id']."&tn=".$to['nickname']."&ta=".config_weixin_img($to['face'])."&ts=重庆市&url=".$furl;
+		
+		$im = 0;
+		if($this->uid == $detail['user_id'] || empty($this->uid) || empty($detail['user_id']) || empty($imhost)){
+			$im = 0;
+		}else{
+			$im = 1;
+		}
+		$this->assign('im',$im);
+		$this->assign('url',$url);
+
+
+
+
+html文件：application\wap\view\shop\detail.html
+
+ {if condition="$im"}
+        <div class="blank-10 bg"></div>
+        <div class="container2" style="margin:10px;">
+            <div class="form-button"><a href="{$url}" class="button button-block button-big bg-dot text-center" type="submit">联系商家客服</a></div>
+        </div>
+    {/if} 
+=========================================================================================================================
+
+
+
+
+

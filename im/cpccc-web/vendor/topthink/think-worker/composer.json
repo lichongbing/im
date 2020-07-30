@@ -1,0 +1,21 @@
+{
+    "name": "topthink/think-worker",
+    "description": "workerman extend for thinkphp5",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "zhf",
+            "email": "zhf@cpccc.com"
+        }
+    ],
+    "require": {
+	"workerman/workerman":"^3.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "think\\worker\\": "src"
+        },
+        "files": [
+        ]
+    }
+}

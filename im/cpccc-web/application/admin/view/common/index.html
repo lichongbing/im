@@ -1,0 +1,131 @@
+{include file="public/header"/}
+<div class="main-body">
+	<div>
+		<form class="layui-form" action="">
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">消息提示音</label>
+				<div class="layui-input-block">
+					<input type="radio" name="prompt_tone" value="off" title="关闭" {if $setting['prompt_tone']=='off'}checked{/if}>
+					<input type="radio" name="prompt_tone" value="on" title="开启" {if $setting['prompt_tone']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">群聊功能</label>
+				<div class="layui-input-block">
+					<input type="radio" name="group_chat" value="off" title="关闭" {if $setting['group_chat']=='off'}checked{/if}>
+					<input type="radio" name="group_chat" value="on" title="开启" {if $setting['group_chat']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">私聊功能</label>
+				<div class="layui-input-block">
+					<input type="radio" name="private_chat" value="off" title="关闭" {if $setting['private_chat']=='off'}checked{/if}>
+					<input type="radio" name="private_chat" value="on" title="开启" {if $setting['private_chat']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">允许陌生人聊天</label>
+				<div class="layui-input-block">
+					<input type="radio" name="stranger_chat" value="off" title="关闭" {if $setting['stranger_chat']=='off'}checked{/if}>
+					<input type="radio" name="stranger_chat" value="on" title="开启" {if $setting['stranger_chat']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">允许用户加好友</label>
+				<div class="layui-input-block">
+					<input type="radio" name="add_friend" value="off" title="关闭" {if $setting['add_friend']=='off'}checked{/if}>
+					<input type="radio" name="add_friend" value="on" title="开启" {if $setting['add_friend']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">允许用户建群组</label>
+				<div class="layui-input-block">
+					<input type="radio" name="create_group" value="off" title="关闭" {if $setting['create_group']=='off'}checked{/if}>
+					<input type="radio" name="create_group" value="on" title="开启" {if $setting['create_group']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">发文件</label>
+				<div class="layui-input-block">
+					<input type="radio" name="upload_file" value="off" title="关闭" {if $setting['upload_file']=='off'}checked{/if}>
+					<input type="radio" name="upload_file" value="on" title="开启" {if $setting['upload_file']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">发图片</label>
+				<div class="layui-input-block">
+					<input type="radio" name="upload_img" value="off" title="关闭" {if $setting['upload_img']=='off'}checked{/if}>
+					<input type="radio" name="upload_img" value="on" title="开启" {if $setting['upload_img']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">发表情</label>
+				<div class="layui-input-block">
+					<input type="radio" name="emoji" value="off" title="关闭" {if $setting['emoji']=='off'}checked{/if}>
+					<input type="radio" name="emoji" value="on" title="开启" {if $setting['emoji']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">发语音</label>
+				<div class="layui-input-block">
+					<input type="radio" name="voice" value="off" title="关闭" {if $setting['voice']=='off'}checked{/if}>
+					<input type="radio" name="voice" value="on" title="开启" {if $setting['voice']=='on'}checked{/if}>
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">要过滤的脏字</label>
+				<div class="layui-input-block">
+					<textarea name="dirty_words" placeholder="每行一个" class="layui-textarea">{$setting['dirty_words']}</textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="formDemo">保存设置</button>
+					<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+    $(".layui-form-item:odd").css('background', '#efefef');
+    layui.use('form', function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            $.ajax({
+                url:'/admin/common/save',
+                type:'post',
+                data:data.field,
+                success:function(res){
+                    if (res.code == 0) {
+                        layui.layer.msg('保存成功');
+                    } else {
+                        layui.layer.msg(res.msg);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+<style>
+	.layui-form-label {
+		width: 300px;
+	}
+
+	.layui-input-block {
+		width: 300px;
+		margin-left:430px;
+	}
+
+	.layui-form-item {
+		margin-bottom: 0;
+		padding: 8px;
+	}
+</style>
+
+{include file="public/footer"/}
+
+

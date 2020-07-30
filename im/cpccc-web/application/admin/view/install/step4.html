@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+	<title>哈土豆IM安装向导</title>
+	<link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+	<script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+	<script src="/static/admin/libs/layui/layui.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/install.css">
+</head>
+<body>
+<div class="install-body">
+	<form class="layui-form" method="post">
+		<h2 class="form-item">设置管理员</h2>
+		<div class="layui-form-item">
+			<label class="layui-form-label">登录名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="admin_name" value="admin" required  lay-verify="required" placeholder="请输入管理员登录名" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">输入密码</label>
+			<div class="layui-input-inline">
+				<input type="password" name="password1" required lay-verify="required" placeholder="请输入管理员密码" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">再输入密码</label>
+			<div class="layui-input-inline">
+				<input type="password" name="password2" required lay-verify="required" placeholder="请再次输入管理员密码" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<button class="layui-btn form-item" lay-submit lay-filter="form">完成</button>
+	</form>
+</div>
+<script>
+    //Demo
+    layui.use('form', function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit(form)', function(data){
+            $.ajax({
+                url:'/admin/install/step4',
+                type:'post',
+                data: data.field,
+                success:function(res){
+                    if (res.code == 0) {
+                        location = '/admin/install/complete';
+					} else {
+                        layer.open({
+                            content: res.msg
+                        });
+					}
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

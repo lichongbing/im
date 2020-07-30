@@ -1,0 +1,153 @@
+{include file="public/header"/}
+<div class="main-body">
+	<table class="layui-table" lay-even lay-skin="line">
+		<colgroup>
+			<col width="150">
+			<col width="200">
+			<col>
+		</colgroup>
+		<thead>
+		<tr>
+			<th>gid</th>
+			<th>群名</th>
+			<th>创建者uid|账号名|昵称</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+		</thead>
+		<tbody>
+		{volist name='groups' id='item'}
+		<tr>
+			<td>{$item.gid}</td>
+			<td>{$item.groupname}</td>
+			<td>{$item.uid} | {$item.username} | {$item.nickname}</td>
+			<td>{$item.timestamp|date="Y-m-d H:i:s",###}</td>
+			<td gid="{$item.gid}">
+				<button class="layui-btn layui-btn-sm" pop-event="edit_group">编辑</button>
+				<button class="layui-btn layui-btn-sm" pop-event="group_members">群成员</button>
+				<button class="layui-btn layui-btn-sm" pop-event="message_log">聊天记录</button>
+				{if $item.state=='disabled'}
+				    <button class="layui-btn layui-btn-sm layui-btn-warm" pop-event="enable_group">启用</button>
+				{else}
+				    <button class="layui-btn layui-btn-sm layui-btn-danger" pop-event="disable_group">禁用</button>
+				{/if}
+				<button class="layui-btn layui-btn-sm layui-btn-danger" pop-event="delete_group">彻底删除</button>
+			</td>
+		</tr>
+		{/volist}
+		</tbody>
+	</table>
+
+	<div id="page"></div>
+
+
+	<script>
+        layui.use(['laypage', 'layer'], function() {
+            var laypage = layui.laypage;
+            laypage.render({
+                elem: 'page'
+				, limit: {$step}
+                , count: {$count} //数据总数，从服务端得到
+				, curr: {$page}
+                , jump: function (obj, first) {
+                    //首次不执行
+                    if (!first) {
+                        //do something
+                        location = '/admin/group/index?page='+obj.curr;
+                    }
+                }
+            });
+
+            $('.main-body').on("click", "*[pop-event]", function (e) {
+                var event = $(this).attr('pop-event');
+                callback[event]($(e.target.parentNode).attr('gid'));
+            });
+
+            var callback = {
+                edit_group: function (gid) {
+                    layer.open({
+                        type: 2,
+                        title: '编辑用户信息',
+                        content: '/admin/group/edit?gid=' + gid,
+                        area: ['800px', '550px']
+                    });
+                },
+                group_members:function (gid) {
+                    layer.open({
+                        type: 2,
+                        title: '群成员 gid:'+gid,
+                        content: '/admin/group/members?gid=' + gid,
+                        area: ['800px', '550px']
+                    });
+                },
+                delete_group:function (gid) {
+                    layer.confirm('确定彻底删除该群么', {icon: 3, title:'提示'}, function(index){
+                        $.ajax({
+                            url:'/admin/group/delete',
+                            type:'post',
+                            data: {gid:gid},
+                            success:function(res){
+                                if (res.code == 0) {
+                                    layui.layer.msg('操作成功');
+                                    setTimeout(function(){location.reload();}, 1000);
+                                } else {
+                                    layui.layer.msg(res.msg);
+                                }
+                            }
+                        });
+                    });
+
+                },
+                message_log:function (gid) {
+                    layer.open({
+                        type: 2,
+                        title: '聊天记录 gid:'+gid,
+                        content: '/admin/group/chatlog?gid=' + gid,
+                        area: ['800px', '550px']
+                    });
+                },
+                enable_group:function (gid) {
+                    $.ajax({
+                        url:'/admin/group/update',
+                        type:'post',
+                        data: {gid:gid, state:'normal'},
+                        success:function(res){
+                            if (res.code == 0) {
+                                layui.layer.msg('操作成功');
+                                setTimeout(function(){location.reload();}, 1000);
+                            } else {
+                                layui.layer.msg(res.msg);
+                            }
+                        }
+                    });
+                },
+                disable_group:function (gid) {
+                    layer.confirm('确定禁用该群么', {icon: 3, title:'提示'}, function(index) {
+                        $.ajax({
+                            url: '/admin/group/update',
+                            type: 'post',
+                            data: {gid: gid, state: 'disabled'},
+                            success: function (res) {
+                                if (res.code == 0) {
+                                    layui.layer.msg('操作成功');
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 1000);
+                                } else {
+                                    layui.layer.msg(res.msg);
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+        });
+
+
+	</script>
+
+</div>
+
+{include file="public/footer"/}
+
+

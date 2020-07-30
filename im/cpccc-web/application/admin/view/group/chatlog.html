@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+	<title>哈土豆IM管理后台-消息日志</title>
+	<link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+	<script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+	<script src="/static/admin/libs/layui/layui.js"></script>
+	<script src="/static/admin/js/main.js"></script>
+	<script src="/static/admin/js/flow.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/main.css">
+</head>
+
+<body>
+<div class="chatlog">
+	<ul id="flow">
+
+	</ul>
+
+	<style>
+		html {
+			font-size: 45px;
+		}
+	</style>
+	<script>
+		var last_mid;
+		var limit = {$limit};
+		var first = true;
+		var flow = layui.flow;
+		flow.load({
+			elem: '#flow' //指定列表容器
+			,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+				chat_decode.lastTime = 0;
+				var lis = [];
+				$.ajax({
+					url:'/admin/group/chatget',
+					type:'get',
+					data: {id:{$gid}, mid:last_mid, limit:limit},
+					success:function(res){
+						last_mid = 0;
+						$.each(res.data, function (k, item) {
+							if (!last_mid) {
+								last_mid = item.mid;
+							}
+							lis.push(chat_decode(item));
+						});
+
+						next(lis.join(''), res.data.length >= limit);
+
+						if (first) {
+							setTimeout(function () {
+								$(document).scrollTop($('#flow').height())
+							}, 100);
+							first = false;
+						}
+					}
+				});
+			}
+		});
+	</script>
+</div>
+
+</body>
+</html>
+
+

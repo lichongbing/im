@@ -1,0 +1,84 @@
+
+=======================【2020年发货的一律看word文档，更加详细】===========================
+
+===============环境apache2.4+mysql5.6数据库============================
+
+
+1：如果报错： 宝塔修改user.ini文件  open_basedir里面的删除一级目录/cpccc-web/
+
+2：/cpccc-web/config/  配置数据库信息
+
+
+3:运行目录：/cpccc-web/public  不要开启防跨站攻击【修改user.ini】
+
+  【示范案例】open_basedir=/www/wwwroot/你网站的目录/:/tmp/:/proc/
+
+   
+
+4：开启https  不要强制开启，配置一定要注意
+
+
+================================linux命令=============================================
+
+5：检测环境：curl -Ss http://www.workerman.net/check.php | php   【如果有禁用函数要取消】
+6：下载命令：git clone https://github.com/walkor/Workerman 【安装步骤】
+7：修改数据库：setting  字段：ws_address 的域名值
+
+8：宝塔》》站点管理》》配置文件》》》
+
+找到代码：SSLProxyEngine on  下面加上阿里云安全组跟宝塔后台安全组要加6060  443  端口
+
+    ProxyRequests Off
+    ProxyPass /app ws://127.0.0.1:6060/app
+    ProxyPassReverse /app ws://127.0.0.1:6060/app
+
+open_basedir=/www/wwwroot/im.jintaocms.com/:/tmp/:/proc/
+9：============cd到目录启动=================
+
+
+CD1： cd /www/wwwroot/im.jintaocms.com/cpccc-socket【CD到你自己的目录】
+CD2： cd /www/wwwroot/im.tqzfwl.cn/cpccc-socket
+CD3： cd /www/wwwroot/im.niukea.com/cpccc-socket
+CD4： cd /www/wwwroot/im.shenghuozx.cn/cpccc-socket
+
+CD5： cd /www/wwwroot/im.xincor.cn/cpccc-socket
+
+
+以debug（调试，关闭ssh后不生效了，调试用这个）方式启动
+php start.php start
+以daemon（守护进程，运营后用这个方法）方式启动
+php start.php start -d
+停止
+php start.php stop
+重启
+php start.php restart
+平滑重启
+php start.php reload
+查看状态
+php start.php status
+查看连接状态（需要Workerman版本>=3.5.0）
+php start.php connections
+
+
+lsof -i【查看全部端口】
+lsof -i:4568
+
+
+
+
+看云手册：http://doc3.workerman.net/315117
+
+
+错误解决：
+
+端口2020  6060  等端口都要打开
+
+
+
+
+
+
+
+
+
+

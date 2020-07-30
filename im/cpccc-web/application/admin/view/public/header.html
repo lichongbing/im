@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
+	<title>哈土豆IM管理后台</title>
+	<link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+	<script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+	<script src="/static/admin/libs/layui/layui.js"></script>
+	<script src="/static/admin/js/main.js?v=1.0"></script>
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/main.css?v=OoO4pQ==">
+</head>
+
+<body>
+<div class="layui-header">
+	<div class="logo">哈土豆</div>
+	<ul class="layui-nav" lay-filter="">
+		<li class="layui-nav-item"><a href="javascript:void(0);" onclick="account_edit()">改密码</a></li>
+		<li class="layui-nav-item"><a href="/admin/login/logout">退出</a></li>
+	</ul>
+</div>
+
+<ul class="layui-nav layui-nav-tree" lay-filter="test">
+	<ul class="layui-nav layui-nav-tree layui-nav-side">
+		<li class="layui-nav-item {if $section=="user"}layui-this{/if}"><a href="/admin/user/index">用户列表</a></li>
+		<li class="layui-nav-item {if $section=="group"}layui-this{/if}"><a href="/admin/group/index">群组列表</a></li>
+		<li class="layui-nav-item {if $section=="message"}layui-this{/if}""><a href="/admin/message/index">消息监控</a></li>
+		<li class="layui-nav-item {if $section=="common"}layui-this{/if}"><a href="/admin/common/index">功能设置</a></li>
+	</ul>
+</ul>
+<div class="main-body">
+
+</div>

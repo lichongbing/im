@@ -1,0 +1,14 @@
+location / {
+	rewrite ^/im/h5 /h5.html last;
+	rewrite ^/im/web /web.html last;
+if (!-d $request_filename){
+	set $rule_4 1$rule_4;
+}
+if (!-f $request_filename){
+	set $rule_4 2$rule_4;
+}
+if ($rule_4 = "21"){
+	rewrite ^/(.*)$ /index.php?s=$1 last;
+}
+
+}

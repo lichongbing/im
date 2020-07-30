@@ -1,0 +1,80 @@
+{include file="public/header"/}
+<div class="main-body">
+	<div>
+		<form class="layui-form" action="">
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">appkey</label>
+				<div class="layui-input-block">
+					<input type="text" name="appkey" required  lay-verify="required" placeholder="appkey" autocomplete="off" class="layui-input" value="{$setting['appkey']}">
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">appsecret</label>
+				<div class="layui-input-block">
+					<input type="text" name="appsecret" required  lay-verify="required" placeholder="appsecret" autocomplete="off" class="layui-input" value="{$setting['appsecret']}">
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">websocket服务地址</label>
+				<div class="layui-input-block">
+					<input type="text" name="ws_address" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" value="{$setting['ws_address']}">
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">websocket api地址</label>
+				<div class="layui-input-block">
+					<input type="text" name="api_address" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input" value="{$setting['api_address']}">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="formDemo">保存设置</button>
+					<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+    $(".layui-form-item:odd").css('background', '#efefef');
+    layui.use('form', function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            $.ajax({
+                url:'/admin/common/save',
+                type:'post',
+                data:data.field,
+                success:function(res){
+                    if (res.code == 0) {
+                        layui.layer.msg('保存成功');
+                    } else {
+                        layui.layer.msg(res.msg);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+<style>
+	.layui-form-label {
+		width: 300px;
+	}
+
+	.layui-input-block {
+		width: 300px;
+		margin-left:430px;
+	}
+
+	.layui-form-item {
+		margin-bottom: 0;
+		padding: 8px;
+	}
+</style>
+
+{include file="public/footer"/}
+
+

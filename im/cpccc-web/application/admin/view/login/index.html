@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+	<title>哈土豆IM管理后台</title>
+	<link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+	<script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+	<script src="/static/admin/libs/layui/layui.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/login.css">
+</head>
+
+<body>
+<div class="main">
+	<form class="layui-form" action="/admin/login/check" method="post">
+		<div class="layui-form-item">
+			<h2>登录哈土豆IM管理后台</h2>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<input type="text" name="username" required lay-verify="required" placeholder="用户名" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<input type="password" name="password" required lay-verify="required" placeholder="密码" class="layui-input">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="loginForm">立即提交</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script>
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+        //监听提交
+        form.on('submit(loginForm)', function (data) {
+            $.ajax({
+                type: "post",
+                url: data.form.action,
+                data: data.field,
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code == 0) {
+                        location.href = '/admin';
+                    } else {
+                        layui.layer.msg(res.msg, {end:function () {
+                            $("#login-captcha").attr('src', $("#login-captcha").data('captcha')+ '?_r=' + Math.random());
+                        }});
+                    }
+                }
+            });
+            return false;
+        });
+    });
+
+    // 验证码切换
+    $("#login-captcha").on("click", function () {
+        this.src = $(this).data('captcha') + '?_r=' + Math.random();
+    });
+
+</script>
+</body>
+</html>
+
+

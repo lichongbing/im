@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+	<title>哈土豆IM安装向导</title>
+	<link rel="stylesheet" type="text/css" href="/static/admin/libs/layui/css/layui.css">
+	<script src="/static/admin/js/jquery-1.12.4.min.js"></script>
+	<script src="/static/admin/libs/layui/layui.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/admin/css/install.css">
+</head>
+<body>
+<div class="install-body">
+	<form class="layui-form" method="post">
+		<h2 class="form-item">数据库配置</h2>
+		<div class="layui-form-item">
+			<label class="layui-form-label">数据库地址</label>
+			<div class="layui-input-inline">
+				<input type="text" name="dbhost" required  lay-verify="required" placeholder="请输数据库host地址" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">数据库端口</label>
+			<div class="layui-input-inline">
+				<input type="text" name="dbport" value="3306" required  lay-verify="required" placeholder="请输数据库端口" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">数据库用户名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="dbuser" required  lay-verify="required" placeholder="请输数据库用户名" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">数据库密码</label>
+			<div class="layui-input-inline">
+				<input type="password" name="dbpassword" required lay-verify="required" placeholder="请输入数据库密码" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">数据库名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="dbname" required  lay-verify="required" placeholder="请输数据库名称" class="layui-input">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">覆盖数据库</label>
+			<div class="layui-input-block">
+				<input type="radio" name="overwrite" value="yes" title="覆盖">
+				<input type="radio" name="overwrite" value="no" title="不覆盖" checked>
+			</div>
+		</div>
+		<button class="layui-btn form-item" lay-submit lay-filter="form">下一步</button>
+	</form>
+</div>
+<script>
+    //Demo
+    layui.use('form', function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit(form)', function(data){
+            $.ajax({
+                url:'/admin/install/step2',
+                type:'post',
+                data: data.field,
+                success:function(res){
+                    if (res.code == 0) {
+                        location = '/admin/install/step3';
+					} else {
+                        layer.open({
+                            content: res.msg
+                        });
+					}
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

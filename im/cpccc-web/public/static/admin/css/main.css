@@ -1,0 +1,311 @@
+img {
+    border-radius: 5px;
+}
+
+.layui-nav-side {
+    top: 60px;
+}
+
+.layui-nav {
+    border-radius:initial;
+}
+
+.layui-header {
+    background-color: #23262E;
+    color: rgba(255,255,255,.7);
+    font-size:14px;
+}
+
+.layui-header .layui-nav {
+    position: absolute;
+    right: 30px;
+    top: 0;
+    padding: 0;
+    background-color: #23262E;
+}
+
+.logo {
+    position: absolute;
+    left: 40px;
+    top: 16px;
+    font-size:26px;
+}
+
+.main-body {
+    position: fixed;
+    left:200px;
+    top:60px;
+    bottom:0;
+    right:0;
+    padding:20px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.layui-table, .layui-table-view {
+    margin:0;
+}
+
+input:disabled{
+    background-color: #F5F5F5;
+    color:#ACA899;opacity: 1;
+}
+
+#page {
+    text-align: center;
+}
+
+/*聊天记录*/
+
+.chatlog {
+    margin:18px;
+}
+
+.chatlog ul li {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    display: -ms-flexbox;
+    margin-bottom: .36rem;
+}
+
+.chatlog ul li .avatar {
+    display: block;
+    overflow: hidden;
+    height: .85rem;
+    width: .85rem;
+    min-width: .85rem;
+}
+
+.chatlog ul li .avatar img {
+    vertical-align: top;
+    height: 100%;
+    width: 100%;
+}
+
+.chatlog ul li .content {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 62%;
+    -ms-flex: 1 1 62%;
+    flex: 1 1 62%;
+}
+
+.chatlog ul li .target {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    color: #aaa;
+}
+
+.chatlog ul li .target p{
+    margin-left:.2rem;
+}
+
+.chatlog ul li .content .author {
+    color: #aaa;
+    font-size: .2rem;
+    margin: 0 .2rem;
+}
+
+.chatlog ul li .content a {
+    color: dodgerblue;
+}
+
+.chatlog ul li.others .content .msg {
+    background-color: #fff;
+    border-color: #f0f0f0;
+}
+
+.chatlog ul li .content .msg {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: .07rem;
+    color: #333;
+    float: left;
+    font-size: .35rem;
+    margin: 0 .2rem;
+    padding: .16rem;
+    word-wrap: break-word;
+    word-break: break-all;
+    min-height: .5rem;
+    max-width: 12rem;
+    position: relative;
+    transition: all .3s;
+}
+
+.chatlog ul li.others .content .msg:before {
+    background: inherit;
+    border-color: inherit;
+    left: -.115rem;
+    transform: translate(0, -50%) rotate(-135deg);
+}
+
+.chatlog ul li .content .msg:before {
+    content: '';
+    display: inline-block;
+    border-style: solid;
+    border-width: .01rem .01rem 0 0;
+    height: .2rem;
+    width: .2rem;
+    position: absolute;
+    top: .3rem;
+}
+
+.chatlog ul li .content .picture {
+    background-color: transparent !important;
+    border-width: 0;
+    border-radius: .07rem;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.chatlog ul li .content .picture .img__pic {
+    vertical-align: top;
+    pointer-events: none;
+    max-height: 12rem;
+    max-width: 12rem;
+}
+
+.chatlog ul li.time {
+    padding-top: .25rem;
+}
+
+.chatlog ul li.time span {
+    background: rgba(0, 0, 0, .1);
+    color: #fff;
+    border-radius: .05rem;
+    display: block;
+    font-size: .28rem;
+    font-family: Verdana;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: .05rem .1rem;
+    line-height: normal;
+    max-width: 90%;
+}
+
+.chatlog ul li.notice span {
+    background: rgba(0, 0, 0, .1);
+    color: #fff;
+    border-radius: .05rem;
+    display: block;
+    font-size: .28rem;
+    font-family: Verdana;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: .1rem;
+    line-height: normal;
+    max-width: 90%;
+}
+
+.chatlog .file-cover {
+    display: table-cell;
+    padding-right: .2rem;
+}
+.chatlog .file-icon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 1rem;
+    height: 1rem;
+    background: url(/static/admin/img/icon__files.png) no-repeat;
+    background-position: -3rem -1rem;
+    background-size: 4rem 2rem;
+}
+
+.table_head_background {
+    background-image: url('https://static.workerman.net/img/p_back_bg.png');
+}
+
+.chatlog .ppt-icon {
+    background-position: 0rem 0rem;
+}
+
+.chatlog .doc-icon {
+    background-position: -1rem 0rem;
+}
+
+.chatlog .xls-icon {
+    background-position: -2rem 0rem;
+}
+
+.chatlog .pdf-icon {
+    background-position: -3rem 0rem;
+}
+
+.chatlog .txt-icon {
+    background-position: 0rem -1rem;
+}
+
+.chatlog .zip-icon {
+    background-position: -1rem -1rem;
+}
+
+.chatlog .file-cover {
+    display: table-cell;
+    padding-right: .2rem;
+}
+
+.chatlog .file-info {
+    display: table-cell;
+    vertical-align: top;
+    font-size: 0.3rem;
+}
+
+.chatlog .file-info .name {
+    max-width : 6rem;
+    display:block;
+    line-height: 180%;
+}
+
+.chatlog .file-info .size {
+    color: #777;
+}
+
+.chatlog ul li .content .msg .face {
+    vertical-align: top;
+    height: .5rem;
+}
+
+.chatlog .route180 {
+    transform: rotate(180deg);
+}
+.chatlog .f-right {
+    float: right;
+    text-align: right;
+}
+.chatlog .audio_box {
+    width: .6rem;
+    height: .5rem;
+    background: url(/static/admin/img/voice.png);
+    background-size: 2.3rem .64rem;
+    background-repeat: no-repeat;
+    background-position: -.06rem;
+    display: block;
+}
+
+.chatlog .f-left {
+    float: left;
+}
+.chatlog .audio_body {
+    width: 2rem;
+    display: block;
+    height: .4rem;
+}
+
+.chatlog .audio_playing{
+    animation: audio_animation 1s steps(1) infinite;
+    -moz-animation: audio_animation 1s steps(1) infinite;
+    -webkit-animation: audio_animation 1s steps(1) infinite;
+    -o-animation: audio_animation 1s steps(1) infinite;
+    animation-play-state: running;
+}
+
+@keyframes audio_animation
+{
+    25%  {background-position: -.65rem;}
+    50%  {background-position: -1.17rem;}
+    75%  {background-position: -1.68rem;}
+    100% {background-position: -.06rem;}
+}

@@ -1,0 +1,5 @@
+{
+    "require": {
+        "overtrue/Pinyin": "^4.0"
+    }
+}

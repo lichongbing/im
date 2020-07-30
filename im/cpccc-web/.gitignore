@@ -1,0 +1,6 @@
+*.DS_Store
+*.log
+*.pid
+Thumbs.db*
+config/database.php
+vendor/topthink/framework
